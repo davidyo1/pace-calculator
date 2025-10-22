@@ -1,0 +1,8 @@
+<strings>
+    <string id="AppName">Calculadora de Ritmo</string>
+    <string id="DistanceLabel">Distancia</string>
+    <string id="PaceLabel">Ritmo</string>
+    <string id="TimeLabel">Tiempo</string>
+    <string id="KmUnit">km</string>
+    <string id="PaceUnit">min/km</string>
+</strings>

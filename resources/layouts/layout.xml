@@ -1,0 +1,48 @@
+<layouts>
+    <layout id="MainLayout">
+        <label id="distanceLabel" 
+            x="center" 
+            y="30" 
+            text="@Strings.DistanceLabel" 
+            font="Graphics.FONT_SMALL" 
+            justification="Graphics.TEXT_JUSTIFY_CENTER" 
+            color="Graphics.COLOR_WHITE" />
+        <label id="distanceValue" 
+            x="center" 
+            y="70" 
+            text="5.0 @Strings.KmUnit" 
+            font="Graphics.FONT_MEDIUM" 
+            justification="Graphics.TEXT_JUSTIFY_CENTER" 
+            color="Graphics.COLOR_WHITE" />
+        
+        <label id="paceLabel" 
+            x="center" 
+            y="130" 
+            text="@Strings.PaceLabel" 
+            font="Graphics.FONT_SMALL" 
+            justification="Graphics.TEXT_JUSTIFY_CENTER" 
+            color="Graphics.COLOR_WHITE" />
+        <label id="paceValue" 
+            x="center" 
+            y="170" 
+            text="5:00 @Strings.PaceUnit" 
+            font="Graphics.FONT_MEDIUM" 
+            justification="Graphics.TEXT_JUSTIFY_CENTER" 
+            color="Graphics.COLOR_WHITE" />
+        
+        <label id="timeLabel" 
+            x="center" 
+            y="230" 
+            text="@Strings.TimeLabel" 
+            font="Graphics.FONT_SMALL" 
+            justification="Graphics.TEXT_JUSTIFY_CENTER" 
+            color="Graphics.COLOR_WHITE" />
+        <label id="timeValue" 
+            x="center" 
+            y="270" 
+            text="00:00" 
+            font="Graphics.FONT_LARGE" 
+            justification="Graphics.TEXT_JUSTIFY_CENTER" 
+            color="Graphics.COLOR_WHITE" />
+    </layout>
+</layouts>

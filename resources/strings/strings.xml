@@ -1,0 +1,8 @@
+<strings>
+    <string id="AppName">Pace Calculator</string>
+    <string id="DistanceLabel">Distance</string>
+    <string id="PaceLabel">Pace</string>
+    <string id="TimeLabel">Time</string>
+    <string id="KmUnit">km</string>
+    <string id="PaceUnit">min/km</string>
+</strings>

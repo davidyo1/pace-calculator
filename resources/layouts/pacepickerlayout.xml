@@ -1,0 +1,32 @@
+<layouts>
+    <layout id="PacePickerLayout">
+        <label id="pickerTitle"
+               x="center"
+               y="35%"
+               text="Pace"
+               font="Graphics.FONT_MEDIUM"
+               justification="Graphics.TEXT_JUSTIFY_CENTER"
+               color="Graphics.COLOR_WHITE" />
+        <label id="pickerMinutes"
+               x="45%"
+               y="50%"
+               text="4"
+               font="Graphics.FONT_LARGE"
+               justification="Graphics.TEXT_JUSTIFY_CENTER"
+               color="Graphics.COLOR_LT_GRAY" />
+        <label id="pickerSep"
+               x="center"
+               y="50%"
+               text=":"
+               font="Graphics.FONT_LARGE"
+               justification="Graphics.TEXT_JUSTIFY_CENTER"
+               color="Graphics.COLOR_LT_GRAY" />
+        <label id="pickerSeconds"
+               x="60%"
+               y="50%"
+               text="30"
+               font="Graphics.FONT_LARGE"
+               justification="Graphics.TEXT_JUSTIFY_CENTER"
+               color="Graphics.COLOR_LT_GRAY" />
+    </layout>
+</layouts>

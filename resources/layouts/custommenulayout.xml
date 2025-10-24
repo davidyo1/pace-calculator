@@ -1,0 +1,18 @@
+<layouts>
+    <layout id="CustomMenuLayout">
+        <label id="menuItem0"
+               x="center"
+               y="35%"
+               text="Item 0"
+               font="Graphics.FONT_MEDIUM"
+               justification="Graphics.TEXT_JUSTIFY_CENTER"
+               color="Graphics.COLOR_WHITE" />
+        <label id="menuItem1"
+               x="center"
+               y="50%"
+               text="Item 1"
+               font="Graphics.FONT_MEDIUM"
+               justification="Graphics.TEXT_JUSTIFY_CENTER"
+               color="Graphics.COLOR_LT_GRAY" />
+    </layout>
+</layouts>

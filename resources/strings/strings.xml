@@ -5,4 +5,6 @@
     <string id="TimeLabel">Time</string>
     <string id="KmUnit">km</string>
     <string id="PaceUnit">min/km</string>
+    <string id="SetDistance">Set Distance</string>
+    <string id="SetPace">Set Pace</string>
 </strings>

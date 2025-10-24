@@ -5,4 +5,6 @@
     <string id="TimeLabel">Tiempo</string>
     <string id="KmUnit">km</string>
     <string id="PaceUnit">min/km</string>
+    <string id="SetDistance">Cambiar distancia</string>
+    <string id="SetPace">Cambiar ritmo</string>
 </strings>

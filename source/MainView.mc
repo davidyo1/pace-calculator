@@ -1,7 +1,4 @@
 import Toybox.WatchUi;
-import Toybox.Graphics;
-import Toybox.Lang;
-using Toybox.WatchUi as Ui;
 
 class MainView extends WatchUi.View {
     private var _calculator;
@@ -17,12 +14,9 @@ class MainView extends WatchUi.View {
     function onLayout(dc) {
         setLayout(Rez.Layouts.MainLayout(dc));
         
-        // Get references to layout labels
         _distanceValue = View.findDrawableById("distanceValue");
         _paceValue = View.findDrawableById("paceValue");
         _timeValue = View.findDrawableById("timeValue");
-        
-        // Update initial values
         updateDisplay();
     }
 
@@ -35,8 +29,7 @@ class MainView extends WatchUi.View {
     }
 
     private function updateDisplay() {
-       _distanceValue.setText(_calculator.getDistance().format("%.1f") + " " + WatchUi.loadResource(Rez.Strings.KmUnit));
-        // use sexagesimal pace string
+        _distanceValue.setText(_calculator.getDistance().format("%.1f") + " " + WatchUi.loadResource(Rez.Strings.KmUnit));
         _paceValue.setText(_calculator.getPaceString() + " " + WatchUi.loadResource(Rez.Strings.PaceUnit));
         _timeValue.setText(_calculator.calculateTime());
 

@@ -1,5 +1,5 @@
 import Toybox.WatchUi;
-import Toybox.Graphics;
+import Toybox.Math;
 import Toybox.System;
 
 class NumberPicker extends WatchUi.View {
@@ -12,6 +12,7 @@ class NumberPicker extends WatchUi.View {
     // drawables references
     private var _titleDrawable;
     private var _valueDrawable;
+    private var _height;
 
     function initialize(title, initial, min, max, step) {
         View.initialize();
@@ -20,11 +21,17 @@ class NumberPicker extends WatchUi.View {
         _min = min;
         _max = max;
         _step = step;
+        _value = Math.round(_value * 10.0) / 10.0;
+        if (_value < _min) {
+            _value = _min;
+        } else if (_value > _max) {
+            _value = _max;
+        }
     }
 
     function onLayout(dc) {
-        // use layout file instead of drawing manually
         setLayout(Rez.Layouts.NumberPickerLayout(dc));
+        _height = dc.getHeight();
         _titleDrawable = View.findDrawableById("pickerTitle");
         _valueDrawable = View.findDrawableById("pickerValue");
 
@@ -36,7 +43,6 @@ class NumberPicker extends WatchUi.View {
     }
 
     function onUpdate(dc) {
-        // let framework draw the layout
         View.onUpdate(dc);
     }
 
@@ -54,19 +60,25 @@ class NumberPicker extends WatchUi.View {
     }
 
     function increment() {
-        if (_value + _step <= _max) {
-            _value += _step;
+        var next = Math.round(_value * 10.0) + Math.round(_step * 10.0);
+        if (next <= Math.round(_max * 10.0)) {
+            _value = next / 10.0;
             updateDisplay();
             WatchUi.requestUpdate();
         }
     }
 
     function decrement() {
-        if (_value - _step >= _min) {
-            _value -= _step;
+        var next = Math.round(_value * 10.0) - Math.round(_step * 10.0);
+        if (next >= Math.round(_min * 10.0)) {
+            _value = next / 10.0;
             updateDisplay();
             WatchUi.requestUpdate();
         }
+    }
+
+    function getHeight() {
+        return _height;
     }
 }
 
@@ -75,6 +87,8 @@ class NumberPickerDelegate extends WatchUi.BehaviorDelegate {
     private var _picker;
     private var _lastKeyTime;
     private var _keyRepeatCount;
+    private var _lastDragY;
+    private var _dragRemainder;
 
     function initialize(picker, callback) {
         BehaviorDelegate.initialize();
@@ -82,47 +96,93 @@ class NumberPickerDelegate extends WatchUi.BehaviorDelegate {
         _callback = callback;
         _lastKeyTime = 0;
         _keyRepeatCount = 0;
+        _lastDragY = 0;
+        _dragRemainder = 0;
     }
 
     function onKey(evt) {
         var key = evt.getKey();
-        var currentTime = System.getTimer();
-        
+
         if (key == WatchUi.KEY_UP) {
-            handleKeyPress(currentTime, true);
+            handleKeyPress(true);
             return true;
         } else if (key == WatchUi.KEY_DOWN) {
-            handleKeyPress(currentTime, false);
+            handleKeyPress(false);
+            return true;
+        } else if (key == WatchUi.KEY_ENTER) {
+            save();
+            return true;
+        } else if (key == WatchUi.KEY_ESC) {
+            cancel();
             return true;
         }
         return false;
     }
 
-    private function handleKeyPress(currentTime, isUp) {
+    function onTap(evt) {
+        save();
+        return true;
+    }
+
+    function onDrag(evt) {
+        var coordinates = evt.getCoordinates();
+        var y = coordinates[1];
+        var type = evt.getType();
+
+        if (type == WatchUi.DRAG_TYPE_START) {
+            _lastDragY = y;
+            _dragRemainder = 0;
+        } else if (type == WatchUi.DRAG_TYPE_CONTINUE) {
+            var movement = _lastDragY - y;
+            _lastDragY = y;
+            _dragRemainder += movement;
+            var threshold = _picker.getHeight() / 20;
+
+            while (_dragRemainder >= threshold) {
+                _picker.increment();
+                _dragRemainder -= threshold;
+            }
+            while (_dragRemainder <= -threshold) {
+                _picker.decrement();
+                _dragRemainder += threshold;
+            }
+        } else if (type == WatchUi.DRAG_TYPE_STOP) {
+            _dragRemainder = 0;
+        }
+        return true;
+    }
+
+    function onSelect() {
+        save();
+        return true;
+    }
+
+    function onBack() {
+        cancel();
+        return true;
+    }
+
+    private function save() {
+        _callback.invoke(_picker.getValue());
+        WatchUi.popView(WatchUi.SLIDE_DOWN);
+    }
+
+    private function cancel() {
+        WatchUi.popView(WatchUi.SLIDE_DOWN);
+    }
+
+    private function handleKeyPress(isUp) {
+        var currentTime = System.getTimer();
         var timeDiff = currentTime - _lastKeyTime;
-        
-        // If this is a new key press (not a repeat)
-        if (timeDiff > 1000 || _lastKeyTime == 0) {
+
+        if (_lastKeyTime == 0 || timeDiff > 1000) {
             _keyRepeatCount = 0;
         } else {
             _keyRepeatCount++;
         }
-        
         _lastKeyTime = currentTime;
-        
-        // Calculate how many steps to increment based on repeat count
-        var steps = 1;
-        if (_keyRepeatCount > 15) {
-            steps = 10; // Very fast after 15 repeats
-        } else if (_keyRepeatCount > 10) {
-            steps = 5; // Fast after 10 repeats
-        } else if (_keyRepeatCount > 5) {
-            steps = 3; // Medium after 5 repeats
-        } else if (_keyRepeatCount > 2) {
-            steps = 2; // Slightly faster after 2 repeats
-        }
-        
-        // Apply the steps
+
+        var steps = getAcceleratedSteps();
         for (var i = 0; i < steps; i++) {
             if (isUp) {
                 _picker.increment();
@@ -132,9 +192,16 @@ class NumberPickerDelegate extends WatchUi.BehaviorDelegate {
         }
     }
 
-    function onSelect() {
-        _callback.invoke(_picker.getValue());
-        WatchUi.popView(WatchUi.SLIDE_DOWN);
-        return true;
+    private function getAcceleratedSteps() {
+        if (_keyRepeatCount > 15) {
+            return 10;
+        } else if (_keyRepeatCount > 10) {
+            return 5;
+        } else if (_keyRepeatCount > 5) {
+            return 3;
+        } else if (_keyRepeatCount > 2) {
+            return 2;
+        }
+        return 1;
     }
 }

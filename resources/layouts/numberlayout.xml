@@ -2,14 +2,14 @@
     <layout id="NumberPickerLayout">
         <label id="pickerTitle"
                x="center"
-               y="35%"
+               y="30%"
                text="Picker"
                font="Graphics.FONT_MEDIUM"
                justification="Graphics.TEXT_JUSTIFY_CENTER"
                color="Graphics.COLOR_WHITE" />
         <label id="pickerValue"
                x="center"
-               y="50%"
+               y="48%"
                text="0.0"
                font="Graphics.FONT_LARGE"
                justification="Graphics.TEXT_JUSTIFY_CENTER"

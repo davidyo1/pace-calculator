@@ -1,50 +1,47 @@
 # Garmin Pace Calculator
 
-A small Connect IQ watch app that calculates the time required to run a given distance at a given pace.  
-Current implementation supports distance in kilometers, pace as sexagesimal (minutes:seconds per km), localized strings (English / Spanish) and a basic number picker.
+A Connect IQ watch app that estimates the time needed to cover a distance at a selected running pace. It currently supports kilometers, pace in minutes and seconds per kilometer, and English and Spanish UI strings.
 
 ## Project layout
-source/
+
+`source/`
 - App.mc — application entry
-- MainView.mc — main UI view (uses Rez layout)
-- MainDelegate.mc — main behavior (opens menu)
-- MenuDelegate.mc — handles menu actions and launches pickers
-- NumberPicker.mc — generic numeric picker view
-- PaceCalculator.mc — business logic; stores pace as seconds-per-km and computes total time
-- Utils.mc — formatting helpers (HH:MM:SS, M:SS)
+- `MainView.mc` - calculator display
+- `MainDelegate.mc` - opens the settings menu
+- `CustomMenuView.mc` / `CustomMenuDelegate.mc` - distance and pace menu
+- `NumberPicker.mc` - distance picker and input delegate
+- `PacePicker.mc` - pace picker and input delegate
+- `PaceCalculator.mc` - distance/pace state and time calculation
+- `Utils.mc` - time and pace formatting
 
-resources/
-- layouts/layout.xml — main layout (labels with IDs: distanceValue, paceValue, timeValue)
-- strings/strings.xml — default (English) strings
-- drawables/drawables.xml — icons, if present
+`resources/`
+- `layouts/` - calculator, menu, and picker layouts
+- `strings/strings.xml` - English strings
+- `drawables/` - launcher icon
 
-resources-spa/
-- strings/strings.xml — Spanish strings (alternative resource directory used in this project)
+`resources-spa/strings/strings.xml` contains the Spanish strings. Keep its string IDs in sync with the English file.
 
-manifest.xml — app manifest (lists supported languages: `eng`, `spa`)  
-project.properties — build metadata  
-monkey.jungle — project file for the toolchain
+## Using the app
 
-## Key behavior
-- Pace is stored as total seconds per kilometer (`PaceCalculator._paceSeconds`).
-- Display:
-  - Pace shown as `M:SS` via `Utils.formatPace()`
-  - Total time shown as `HH:MM:SS` via `Utils.formatTime()`
-- Locale selection is driven by the manifest languages entry and the resource files. The simulator/device language determines which resource bundle is used.
+- Tap the calculator screen, or press Enter, to open the settings menu.
+- Tap a menu item to open its picker.
+- In the distance picker, drag up or down to adjust the value. Tap anywhere to save.
+- In the pace picker, tap the minutes or seconds value to choose that component, then drag up or down to adjust it. Tap elsewhere to save.
+- Button controls are also available: Up/Down adjust values, Enter saves, and Back cancels. Repeated button presses accelerate. In the pace picker, the device's next/previous-page controls switch between minutes and seconds.
 
-## Build & run (VS Code / Connect IQ extension)
+The default distance is 42.2 km and the default pace is 4:15 min/km. Distance changes use 0.1 km steps, pace changes use 5-second steps, and the calculated time is rounded to the nearest second.
+
+## Build and run
+
 1. Make sure Connect IQ SDK and the VS Code Connect IQ extension are installed.
-2. Clean & build:
-   - Command Palette → `Monkey C: Clean Project`
-   - Command Palette → `Monkey C: Build Project`
-   - (Or delete `bin/` then build)
-3. Run in simulator:
-   - Command Palette → `Monkey C: Run on Simulator` or use the Run control in the Connect IQ extension.
-4. When changing resources or languages, restart the simulator and rebuild the app.
+2. Run `Monkey C: Clean Project`, then `Monkey C: Build Project` from the Command Palette.
+3. Run the app with `Monkey C: Run on Simulator` or the Connect IQ extension's Run control.
+4. To check localized strings, set the simulator/device language to English or Spanish and rebuild if needed.
 
 ## Contribution
-- Fork, add tests or features (PacePicker, meters support, mile option), open PRs.
-- Keep strings consistent across language files (same ids).
+
+Keep English and Spanish string IDs consistent. The project does not currently include automated tests.
 
 ## License
+
 MIT

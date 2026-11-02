@@ -1,4 +1,5 @@
 import Toybox.WatchUi;
+import Toybox.System;
 
 class CustomMenuDelegate extends WatchUi.BehaviorDelegate {
     private var _menuView;
@@ -14,33 +15,61 @@ class CustomMenuDelegate extends WatchUi.BehaviorDelegate {
         var key = evt.getKey();
 
         if (key == WatchUi.KEY_UP) {
-            var idx = _menuView.getSelected();
-            idx = (idx - 1) < 0 ? (_menuView.size() - 1) : (idx - 1);
-            _menuView.setSelected(idx);
-            WatchUi.requestUpdate();
+            selectPrevious();
             return true;
         } else if (key == WatchUi.KEY_DOWN) {
-            var idx = _menuView.getSelected();
-            idx = (idx + 1) >= _menuView.size() ? 0 : (idx + 1);
-            _menuView.setSelected(idx);
-            WatchUi.requestUpdate();
+            selectNext();
             return true;
         } else if (key == WatchUi.KEY_ENTER) {
-            var idx = _menuView.getSelected();
-            var id = _menuView.getId(idx);
-            if (id == :distance) {
-                var numberPicker = new NumberPicker(WatchUi.loadResource(Rez.Strings.SetDistance), _calculator.getDistance(), 0.1, 100.0, 0.1);
-                WatchUi.pushView(numberPicker, new NumberPickerDelegate(numberPicker, method(:onDistanceSelected)), WatchUi.SLIDE_UP);
-                return true;
-            } else if (id == :pace) {
-                var initial = _calculator.getPaceAsMinutesFloat();
-                var pacePicker = new PacePicker(WatchUi.loadResource(Rez.Strings.SetPace), initial, 1, 15, 5); // stepSeconds = 5
-                WatchUi.pushView(pacePicker, new PacePickerDelegate(pacePicker, method(:onPaceSelected), false), WatchUi.SLIDE_UP);
-                return true;
-            }
+            openSelectedItem();
+            return true;
         }
-
         return false;
+    }
+
+    function onTap(evt) {
+        var y = evt.getCoordinates()[1];
+        var screenHeight = System.getDeviceSettings().screenHeight;
+        var index = y < screenHeight * 0.465 ? 0 : 1;
+        _menuView.setSelected(index);
+        openSelectedItem();
+        return true;
+    }
+
+    function onNextPage() {
+        selectNext();
+        return true;
+    }
+
+    function onPreviousPage() {
+        selectPrevious();
+        return true;
+    }
+
+    private function selectNext() {
+        var idx = (_menuView.getSelected() + 1) % _menuView.size();
+        _menuView.setSelected(idx);
+        WatchUi.requestUpdate();
+    }
+
+    private function selectPrevious() {
+        var idx = _menuView.getSelected() - 1;
+        if (idx < 0) {
+            idx = _menuView.size() - 1;
+        }
+        _menuView.setSelected(idx);
+        WatchUi.requestUpdate();
+    }
+
+    private function openSelectedItem() {
+        var id = _menuView.getId(_menuView.getSelected());
+        if (id == :distance) {
+            var numberPicker = new NumberPicker(WatchUi.loadResource(Rez.Strings.SetDistance), _calculator.getDistance(), 0.1, 100.0, 0.1);
+            WatchUi.pushView(numberPicker, new NumberPickerDelegate(numberPicker, method(:onDistanceSelected)), WatchUi.SLIDE_UP);
+        } else if (id == :pace) {
+            var pacePicker = new PacePicker(WatchUi.loadResource(Rez.Strings.SetPace), _calculator.getPaceSeconds(), 1, 15, 5);
+            WatchUi.pushView(pacePicker, new PacePickerDelegate(pacePicker, method(:onPaceSelected)), WatchUi.SLIDE_UP);
+        }
     }
 
     function onDistanceSelected(value) {
@@ -49,7 +78,7 @@ class CustomMenuDelegate extends WatchUi.BehaviorDelegate {
     }
 
     function onPaceSelected(value) {
-        _calculator.setPaceFromMinutesFloat(value);
+        _calculator.setPaceSeconds(value);
         WatchUi.requestUpdate();
     }
 }
